@@ -1,0 +1,44 @@
+name: pocket-id
+
+volumes:
+  data:
+
+networks:
+  netbird:
+    name: netbird
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+services:
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:v2.5.0-distroless
+    container_name: pocket-id
+    hostname: pocket-id
+    networks:
+      netbird:
+        ipv4_address: 172.30.0.10
+      traefik:
+    environment:
+      APP_URL: https://${DOMAIN:?error}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      TRUST_PROXY: true
+    volumes:
+      - data:/app/data
+    read_only: true
+    user: '1000:1000'
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck" ]
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.pocketid.rule: Host(`${DOMAIN:?error}`)
+      traefik.http.routers.pocketid.priority: 75
+      traefik.http.routers.pocketid.entrypoints: websecure
+      traefik.http.routers.pocketid.middlewares: local-ip-allow-list@file
+      traefik.http.services.pocketid.loadbalancer.server.port: 1411
