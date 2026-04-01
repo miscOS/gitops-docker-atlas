@@ -1,0 +1,115 @@
+name: outline
+
+networks:
+  backend:
+    name: outline_backend
+    driver: bridge
+  netbird:
+    name: netbird
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+volumes:
+  redis_data:
+  postgres_data:
+  data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.101,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Outline"
+
+services:
+  outline:
+    image: outlinewiki/outline:1.5.0
+    container_name: outline
+    networks:
+      backend:
+        aliases:
+          - outline
+      netbird:
+        ipv4_address: 172.30.0.22
+      traefik:
+    expose:
+      - "3000"
+    environment:
+      # Logging and updates
+      ENABLE_UPDATES: true # Sends anonymous usage statistics and update notifications to the Outline team. Set to false to disable.
+      DEBUG: http
+      LOG_LEVEL: info
+      # Application configuration
+      URL: https://${OUTLINE_DOMAIN:?error}
+      SECRET_KEY: ${SECRET_KEY}
+      UTILS_SECRET: ${UTILS_SECRET}
+      DEFAULT_LANGUAGE: de_DE
+      DATABASE_URL: postgres://${POSTGRES_USER:-outline}:${POSTGRES_PASSWORD:-outline}@db:5432/${POSTGRES_DB:-outline}?
+      PGSSLMODE: disable
+      REDIS_URL: redis://broker:6379
+      # File storage configuration
+      FILE_STORAGE: local
+      FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
+      FILE_STORAGE_UPLOAD_MAX_SIZE: 262144000
+      # Security and performance settings
+      FORCE_HTTPS: false
+      RATE_LIMITER_ENABLED: true # Enable endpoint specific rate limiters
+      RATE_LIMITER_REQUESTS: 1000 # Number of requests for global rate limiter
+      RATE_LIMITER_DURATION_WINDOW: 60 # Duration of the window for global rate limiter in seconds
+      # OIDC SSO configuration
+      # DOCS: https://docs.getoutline.com/s/hosting/doc/oidc-8CPBm6uC0I
+      OIDC_DISPLAY_NAME: Pocket ID
+      OIDC_ISSUER_URL: https://${OIDC_SERVER_URL:?error}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_KEY:?error}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?error}
+      OIDC_DISABLE_REDIRECT: true # Disable redirect to OIDC provider on login page (optional, defaults to false)
+    volumes:
+      - data:/var/lib/outline/data
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.outline.rule: Host(`${OUTLINE_DOMAIN}`)
+      traefik.http.routers.outline.entrypoints: websecure
+      traefik.http.services.outline.loadbalancer.server.port: 3000
+
+  postgres:
+    image: postgres:18.3-trixie
+    container_name: outline_db
+    networks:
+      backend:
+        aliases:
+          - db
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-outline}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-outline}
+      POSTGRES_DB: ${POSTGRES_DB:-outline}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "outline", "-U", "user"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  redis:
+    image: redis:8.6.2
+    container_name: outline_redis
+    networks:
+      backend:
+        aliases:
+          - broker
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 3
