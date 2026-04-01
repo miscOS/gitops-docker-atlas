@@ -1,0 +1,27 @@
+name: crowdsec
+
+volumes:
+  config:
+  data:
+
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.7.6-slim
+    container_name: crowdsec-agent
+    network_mode: bridge
+    environment:
+      CUSTOM_HOSTNAME: vm-docker-atlas
+      TZ: Europe/Berlin
+      COLLECTIONS: andreasbrett/paperless-ngx
+      DISABLE_LOCAL_API: true
+      LOCAL_API_URL: ${LAPI_URL}
+      AGENT_USERNAME: ${AGENT_USERNAME}
+      AGENT_PASSWORD: ${AGENT_PASSWORD}
+    volumes:
+      - config:/etc/crowdsec
+      - data:/var/lib/crowdsec/data
+      - ./acquis.d:/etc/crowdsec/acquis.d
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../traefik/logs:/logs/traefik:ro
+    restart: unless-stopped
+
