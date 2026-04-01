@@ -4,6 +4,7 @@ set -eu
 
 INCLUDE_EXTENSIONS=(
   "*.env"
+  "*.json"
   "*.yaml"
 )
 

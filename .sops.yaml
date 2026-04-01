@@ -15,6 +15,10 @@ creation_rules:
   - path_regex: \.env$
     encrypted_regex: '(?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority'
     <<: *recipients
+  # JSON files
+  - path_regex: \.json$
+    encrypted_regex: '(?i)password|key|token|secret|email|domain|ed25519'
+    <<: *recipients
   # YAML files
   - path_regex: \.yaml$
     encrypted_regex: '(?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority|exposed|sourceRangeHosts|expression|rule'
