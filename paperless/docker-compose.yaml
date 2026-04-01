@@ -1,0 +1,120 @@
+name: paperless
+
+networks:
+  backend:
+    name: paperless_backend
+    driver: bridge
+  netbird:
+    name: netbird
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+volumes:
+  data:
+  redis_data:
+  postgres_data:
+  media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.101,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Paperless"
+
+services:
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.13
+    container_name: paperless
+    networks:
+      backend:
+        aliases:
+          - paperless
+      netbird:
+        ipv4_address: 172.30.0.20
+      traefik:
+    environment:
+      USERMAP_UID: 1000
+      USERMAP_GID: 1000
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?error}
+      PAPERLESS_OCR_LANGUAGE: deu
+      PAPERLESS_OCR_LANGUAGES: eng
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBNAME: ${POSTGRES_DB:-paperless}
+      PAPERLESS_DBUSER: ${POSTGRES_USER:-paperless}
+      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD:-paperless}
+      PAPERLESS_CONSUMER_POLLING: 15
+      # PAPERLESS_URL: https://${PAPERLESS_DOMAIN}
+      PAPERLESS_ALLOWED_HOSTS: "${PAPERLESS_DOMAIN},${PAPERLESS_LOCAL_DOMAIN}"
+      PAPERLESS_CORS_ALLOWED_HOSTS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_LOCAL_DOMAIN}"
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_LOCAL_DOMAIN}"
+      # OIDC SSO configuration:
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIAL_ACCOUNT_DEFAULT_GROUPS: pocket-id
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+        {
+          "openid_connect": {
+            "APPS": [
+              {
+                "provider_id": "pocket-id",
+                "name": "Pocket ID",
+                "client_id": "${OIDC_CLIENT_KEY}",
+                "secret": "${OIDC_CLIENT_SECRET}",
+                "settings": {
+                  "server_url": "${OIDC_SERVER_URL}"
+                }
+              }
+            ],
+            "SCOPE": ["openid", "profile", "email", "groups"],
+            "OAUTH_PKCE_ENABLED": "True"
+          }
+        }
+
+      # Optional:
+      # Uncomment after verifying SSO works:
+      #PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+      #PAPERLESS_DISABLE_REGULAR_LOGIN: true
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - /mnt/paperless/Import:/usr/src/paperless/consume
+      - /mnt/paperless/Export:/usr/src/paperless/export
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    labels:
+      crowdsec.enable: true
+      crowdsec.labels.type: paperless-ngx
+      traefik.enable: true
+      traefik.http.routers.paperless.rule: Host(`${PAPERLESS_LOCAL_DOMAIN}`)
+      traefik.http.routers.paperless.priority: 60
+      traefik.http.routers.paperless.entrypoints: websecure
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+
+  postgres:
+    image: postgres:18.3-trixie
+    container_name: paperless_db
+    networks:
+      backend:
+        aliases:
+          - db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-paperless}
+      POSTGRES_USER: ${POSTGRES_USER:-paperless}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paperless}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.6.2
+    container_name: paperless_redis
+    networks:
+      backend:
+        aliases:
+          - broker
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
