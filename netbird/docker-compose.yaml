@@ -1,0 +1,23 @@
+name: netbird
+
+networks:
+  netbird:
+    name: netbird
+    external: true
+
+volumes:
+  data:
+
+services:
+  netbird-peer:
+    image: netbirdio/netbird:0.67.1-rootless
+    container_name: netbird-peer
+    hostname: ${NB_HOSTNAME:?error}
+    networks:
+      netbird:
+    environment:
+      NB_MANAGEMENT_URL: ${NB_MANAGEMENT_URL:?error}
+      NB_SETUP_KEY: ${NB_SETUP_KEY}
+    volumes:
+      - data:/var/lib/netbird
+    restart: unless-stopped
