@@ -54,6 +54,8 @@ services:
       - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
       - "--entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}"
       - "--entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}"
+      - "--entrypoints.websecure.http.tls.domains[1].main=${DOMAIN_PUBLIC}"
+      - "--entrypoints.websecure.http.tls.domains[1].sans=*.${DOMAIN_PUBLIC}"
       # Let's Encrypt ACME
       # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
