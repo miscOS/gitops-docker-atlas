@@ -1,0 +1,8 @@
+# Ignore log files
+*.log*
+
+# Ignore files with secret information
+*.env
+
+# Allow encrypted files
+!*encrypted*

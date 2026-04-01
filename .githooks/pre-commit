@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -eu
+
+INCLUDE_EXTENSIONS=(
+  "*.env"
+  "*.yaml"
+)
+
+EXCLUDE_PATTERNS=(
+  # Exclude specific files that should not be encrypted
+  # Files that are tracked by git are automatically excluded
+)
+
+ENCRYPTION_INFIX=".encrypted"
+TEMPORARY_INFIX=".tmp"
+
+CHANGE_DETECTED=false
+
+# Args for manual invocation:
+#   --reencrypt: If set, the script will re-encrypt the files even if there are no changes in the decrypted content.
+REENCRYPT=false
+for FUNC_ARG in "$@"; do
+  if [ "$FUNC_ARG" = "--reencrypt" ]; then
+    REENCRYPT=true
+    break
+  fi
+done
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+FIND_ARGS=("$REPO_ROOT" -type f "(")
+for i in "${!INCLUDE_EXTENSIONS[@]}"; do
+  if [ $i -gt 0 ]; then
+    FIND_ARGS+=( -o )
+  fi
+
+  FIND_ARGS+=( -name "${INCLUDE_EXTENSIONS[i]}" )
+done
+FIND_ARGS+=( ")" )
+
+for PATTERN in "${EXCLUDE_PATTERNS[@]}"; do
+  FIND_ARGS+=( ! -name "$PATTERN" )
+done
+
+while read -r FILE; do
+
+    # Skip files that are tracked by git, since they are not expected to contain raw sensitive information.
+    if ! git check-ignore -q "$FILE"; then
+      continue
+    fi
+
+    ENC_FILE="${FILE%.*}${ENCRYPTION_INFIX}.${FILE##*.}"
+    TMP_FILE="${FILE%.*}${TEMPORARY_INFIX}.${FILE##*.}"
+
+    sops -e "$FILE" > "$TMP_FILE"
+
+    if [ "$REENCRYPT" = true ]; then
+      # echo "renew encrypted file: $ENC_FILE"
+      cp "$TMP_FILE" "$ENC_FILE"
+      rm "$TMP_FILE"
+      continue
+    fi
+
+    if [ -f "$ENC_FILE" ]; then
+      if ! diff -q <(sops -d "$ENC_FILE") <(sops -d "$TMP_FILE") > /dev/null; then
+        CHANGE_DETECTED=true
+        # echo "updated file: $ENC_FILE!"
+        cp "$TMP_FILE" "$ENC_FILE"
+      fi
+
+      rm "$TMP_FILE"
+      continue
+    fi
+
+    cp "$TMP_FILE" "$ENC_FILE"
+    rm "$TMP_FILE"
+done < <(find "${FIND_ARGS[@]}")
+
+if [ "$CHANGE_DETECTED" = true ]; then
+  echo "Es wurden Änderungen an den verschlüsselten Dateien festgestellt. Bitte überprüfe die Änderungen und committe die aktualisierten verschlüsselten Dateien."
+  exit 1
+fi
+
+exit 0

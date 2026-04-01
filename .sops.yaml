@@ -1,0 +1,21 @@
+stores:
+  json:
+    indent: 2
+  yaml:
+    indent: 2
+
+recipients: &recipients
+  key_groups:
+    - age:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker
+
+creation_rules:
+  # Environment variable files
+  - path_regex: \.env$
+    encrypted_regex: '(?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority'
+    <<: *recipients
+  # YAML files
+  - path_regex: \.yaml$
+    encrypted_regex: '(?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority|exposed|sourceRangeHosts|expression|rule'
+    <<: *recipients
