@@ -1,0 +1,49 @@
+name: backrest
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+
+volumes:
+  cache:
+  data:
+  repository:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.101,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Backup/"
+
+services:
+  backrest:
+    image: garethgeorge/backrest:v1.12.1
+    container_name: backrest
+    hostname: backrest
+    networks:
+      traefik:
+    environment:
+      TZ: Europe/Berlin
+      XDG_CACHE_HOME: /cache
+      BACKREST_CONFIG: /config/backrest.json
+      BACKREST_DATA: /data
+    volumes:
+      - ./config/:/config
+      - ./scripts/:/scripts
+      - cache:/cache
+      - data:/data
+      # Mount for rclone config (needed when using rclone remotes)
+      # - ./backrest/rclone:/root/.config/rclone 
+      # Mount local paths to backup
+      - /var/lib/docker/volumes/:/backup/docker 
+      # Mount local repos (optional for remote storage)
+      - repository:/repository/docker
+      # Mount Docker socket (optional for stopping containers)
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+      traefik.enable: true
+      traefik.http.routers.backrest.rule: Host(`backup.${DOMAIN}`)
+      traefik.http.routers.backrest.priority: 65
+      traefik.http.routers.backrest.entrypoints: websecure
+      traefik.http.services.backrest.loadbalancer.server.port: 9898

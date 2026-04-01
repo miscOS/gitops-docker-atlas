@@ -4,6 +4,9 @@
 # Ignore files with secret information
 *.env
 
+# backrest
+backrest/**/backrest.json*
+
 # traefik
 traefik/**/dynamic.yaml
 
