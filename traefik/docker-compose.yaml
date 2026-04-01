@@ -1,0 +1,121 @@
+name: traefik
+
+networks:
+  macvlan:
+    name: macvlan
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+volumes:
+  letsencrypt:
+
+services:
+  traefik:
+    image: traefik:3.6.12
+    container_name: traefik
+    hostname: traefik
+    networks:
+      macvlan:
+        ipv4_address: 10.0.100.1
+        ipv6_address: fddd:d0::01:00:01
+        mac_address: 10:01:00:00:00:01
+      traefik:
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      TZ: "Europe/Berlin"
+      CLOUDFLARE_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?error}
+    command:
+      # Logging
+      - "--log.level=INFO"
+      - "--log.format=json"
+      - "--accesslog=true"
+      - "--accesslog.addInternals=true"
+      - "--accesslog.format=json"
+      - "--accesslog.filepath=/logs/access.log"
+      # API and Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      # Providers
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik"
+      - "--providers.file.filename=/etc/traefik/dynamic.yaml"
+      # Entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.middlewares[0]=errorpages@file"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
+      - "--entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}"
+      # Let's Encrypt ACME
+      # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare"
+      - "--certificatesresolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # Plugins
+      - "--experimental.plugins.ddns-allowlist.moduleName=github.com/taskmedia/ddns-allowlist"
+      - "--experimental.plugins.ddns-allowlist.version=v1.7.0"
+      # - "--experimental.plugins.crowdsec-bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      # - "--experimental.plugins.crowdsec-bouncer.version=v1.5.1"
+      # - "--entrypoints.websecure.http.middlewares=crowdsec@file"   
+    volumes:
+      - letsencrypt:/letsencrypt
+      - ./config/dynamic.yaml:/etc/traefik/dynamic.yaml:ro
+      - ./logs:/logs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      errorpages: {condition: service_healthy}
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+      traefik.enable: true
+      traefik.http.routers.traefik.rule: Host(`traefik.${DOMAIN}`)
+      traefik.http.routers.traefik.priority: 80
+      traefik.http.routers.traefik.entrypoints: websecure
+      traefik.http.routers.traefik.middlewares: local-ip-allow-list@file
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.services.traefik.loadbalancer.server.port: 666 # Dummy port, not used (required by Traefik)
+
+  logrotate:
+    image: samuelrunggaldier/logrotate:1.2.3
+    container_name: traefik-logrotate
+    network_mode: none # No network needed, as it only accesses local log files
+    environment:
+      TZ: "Europe/Berlin"
+      LOGS_PATH: "/logs/*.log"
+      TRIGGER_INTERVAL: hourly # Check for log rotation every hour
+      MAX_SIZE: 10M
+      MAX_BACKUPS: 8
+    volumes:
+      - ./logs:/logs:rw
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+
+  errorpages:
+    image: ghcr.io/tarampampam/error-pages:3.8.1
+    container_name: traefik-errors
+    hostname: traefik-errors
+    networks:
+      traefik:
+    environment:
+      TEMPLATE_NAME: lost-in-space
+      LOG_FORMAT: console
+      LOG_LEVEL: info
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+      traefik.enable: true
+      traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${DOMAIN}`) || Host(`${DOMAIN}`)
+      traefik.http.routers.errorpages.priority: 1
+      traefik.http.routers.errorpages.entrypoints: websecure
+      traefik.http.services.errorpages.loadbalancer.server.port: 8080

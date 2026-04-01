@@ -1,0 +1,82 @@
+http:
+  # MIDDLEWARES
+  middlewares:
+    # Local IPs Allowlist
+    local-ip-allow-list:
+      plugin:
+        ddns-allowlist:
+          sourceRangeHosts:
+            - ENC[AES256_GCM,data:h6xIsGQzLBN0SL+un7FoTuq8vuzDtwWI,iv:DUner1MizkDt21t6CYx3t0qhwPRTNwLyf30F3bCdM5Q=,tag:wqbS80irWJKmSoHnMrKEgg==,type:str]
+          sourceRangeIps:
+            - 127.0.0.1/32
+            - 10.0.0.0/16
+    # Error pages
+    errorpages:
+      errors:
+        status:
+          - 400-599
+        service: errorpages@docker
+        query: /{status}.html
+  # ROUTERS
+  routers:
+    # TrueNAS
+    truenas:
+      rule: ENC[AES256_GCM,data:Hx/9vSuF6lMPnWi6BIa1Zrg7hM2VyyDvUnZVTguHjGeWIOYe5Vjd1xgnIfsxadUh/QL1mj4grYYA0Xg/eR5htA==,iv:fNOBbZW+CeBXEH2H7Zs9nC1Jpi0BT10tglhELhA8vK8=,tag:UhDCr/z/rmLWlbh4RNQdAQ==,type:str]
+      entryPoints:
+        - websecure
+      middlewares:
+        - local-ip-allow-list@file
+      service: truenas@file
+    # Proxmox
+    proxmox:
+      rule: ENC[AES256_GCM,data:p/NeK/IXpF0+V5XmAZ1NBJSwcg8SZbADd0bTfqN+N/E=,iv:EpB/zudveRbw/yV5Vt6fkEkp/iqh/yTECdM4W/uaCDc=,tag:GNL+9ba1NsaBieKnulRvXg==,type:str]
+      entryPoints:
+        - websecure
+      middlewares:
+        - local-ip-allow-list@file
+      service: proxmox@file
+  # SERVICES
+  services:
+    # TrueNAS
+    truenas:
+      loadBalancer:
+        servers:
+          - url: ENC[AES256_GCM,data:UWLJR6k3OLQD/VTDkoI4lOXZpIf6,iv:4yMd76uajuPoWeDrgBXcJXywDt7nSeA7pzeg+CqvCq0=,tag:CI4f6m2p6c1mo+kreeE2TQ==,type:str]
+        passHostHeader: true
+    # Proxmox
+    proxmox:
+      loadBalancer:
+        serversTransport: insecure
+        servers:
+          - url: ENC[AES256_GCM,data:xQ4vaocY0zgLewSllSzW51IKjszLMQ==,iv:Ulu3gDm7JpSefrmVWxmNWRG6AaVFRIQPovupAGrc/iQ=,tag:m7s3QzbKSShvDdoi2saZ0A==,type:str]
+  # SERVERS TRANSPORTS
+  serversTransports:
+    # Allow self signed certificates
+    insecure:
+      insecureSkipVerify: true
+sops:
+  age:
+    - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSBpb0hv
+        anFRU1AzNE9peTVPbW1wU3R1MW92bkw2UW0vdi94bmVjU2tXYkhVCjRJMFVMd21v
+        Z0lKWWttV3FMN1FhWEFCaGtPRXpkN1hieGRKcmg4YUNMeUEKLS0tIGVrV21WVHpI
+        b2N1MnhLNFRtQkZia2V2YkVqb2lQQVlBZTlvVXBBWU1KT0UKGwYWRsuEcbALeKTU
+        sKgQ/SjeDO42elyYxfFOim0Jn8pcgR6/Mk/ohWxQ4VDm/wxcbQherd/Cg7DtChul
+        m/sRww==
+        -----END AGE ENCRYPTED FILE-----
+    - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyB4Si9S
+        cGZheFZYMzRkT1NnSCtGdmlScWgxZ2pCcXBjRTJPWjh0dU0vMjFJCkNSNzQyaXRp
+        U0x0b1FFZENMems2b25VeEN4eHAvbm5Fek16eGgvK3FEclkKLS0tIDl4UHRHQTFE
+        Nm01VXU5emhPNzV3RWFKc0tyVHhmaE02UjZFMmM0b0hzVm8KwHDeSiHgp7ng2F7Z
+        qNTP+Cpwjv9HmTrFQTYu3OLsGygKKBGPLVe71lYFq/lXTvpR83UUhw8MFghEKdFW
+        mcqYxA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-04-01T09:39:06Z"
+  mac: ENC[AES256_GCM,data:eLCV5lDMJG4ObpfVDhdgWe6Ixt3QH7vkGHea9Dg4fOFf8kOrGU9VJmhe0odbHgCFg6JTamwlldmXmqrHiTsvDAH7GsGX1G2t4CJoSvErv47XRxQK/qWJSNvYXgDjwExHcJioksoAPCntHG3HNUb6DUyGQxflRwc7x1v/VK4lMPo=,iv:bmB7Z33uZQW+rsXRR9xiHEZMYUFT2KoD/LJkII+DZmw=,tag:eyCxBxJ55fPc/USm7I9rNA==,type:str]
+  encrypted_regex: (?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority|exposed|sourceRangeHosts|expression|rule
+  version: 3.12.2

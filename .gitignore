@@ -4,5 +4,8 @@
 # Ignore files with secret information
 *.env
 
+# traefik
+traefik/**/dynamic.yaml
+
 # Allow encrypted files
 !*encrypted*
