@@ -60,7 +60,7 @@ services:
       traefik.http.services.nodeRED.loadbalancer.server.port: 1880
 
   zigbee:
-    image: koenkk/zigbee2mqtt:2.9.1
+    image: koenkk/zigbee2mqtt:2.9.2
     container_name: Zigbee
     networks:
       backend:
