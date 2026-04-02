@@ -1,0 +1,43 @@
+name: navidrome
+
+networks:
+  netbird:
+    name: netbird
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+volumes:
+  data:
+  music:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.101,nolock,soft,rw"
+      device: ":/mnt/SSD/Media/Music"
+
+services:
+  navidrome:
+    image: deluan/navidrome:0.61.0
+    container_name: navidrome
+    networks:
+      netbird:
+        ipv4_address: 172.30.0.25
+      traefik:
+    expose:
+      - "4533"
+    environment:
+      ND_LOGLEVEL: debug
+      ND_EXTAUTH_TRUSTEDSOURCES: 172.30.0.0/16
+      ND_ENABLEINSIGHTSCOLLECTOR: false
+    volumes:
+      - "data:/data"
+      - "music:/music:ro"
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+      traefik.enable: true
+      traefik.http.routers.navidrome.rule: Host(`${NAVIDROME_DOMAIN:?error}`)
+      traefik.http.routers.navidrome.priority: 50
+      traefik.http.routers.navidrome.entrypoints: websecure
+      traefik.http.services.navidrome.loadbalancer.server.port: 4533
