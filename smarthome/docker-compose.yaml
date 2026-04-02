@@ -34,7 +34,7 @@ services:
       backrest.keep-alive: true
     
   nodeRED:
-    image: nodered/node-red:4.1.7-22
+    image: nodered/node-red:4.1.8-22
     container_name: nodeRED
     hostname: nodeRED
     networks:
