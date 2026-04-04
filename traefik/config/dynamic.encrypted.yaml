@@ -6,7 +6,7 @@ http:
       plugin:
         ddns-allowlist:
           sourceRangeHosts:
-            - ENC[AES256_GCM,data:h6xIsGQzLBN0SL+un7FoTuq8vuzDtwWI,iv:DUner1MizkDt21t6CYx3t0qhwPRTNwLyf30F3bCdM5Q=,tag:wqbS80irWJKmSoHnMrKEgg==,type:str]
+            - ENC[AES256_GCM,data:J+HSMrirMnsFZkpIGH3S95vYl8mWzed3,iv:b2WBPkLLzYaS7c3Sx9flwOm+Sp/zSeugiwGvtxYqKIU=,tag:ypCOSJtCKpVL+o4ZhzGrMQ==,type:str]
           sourceRangeIps:
             - 127.0.0.1/32
             - 10.0.0.0/16
@@ -21,7 +21,7 @@ http:
   routers:
     # TrueNAS
     truenas:
-      rule: ENC[AES256_GCM,data:Hx/9vSuF6lMPnWi6BIa1Zrg7hM2VyyDvUnZVTguHjGeWIOYe5Vjd1xgnIfsxadUh/QL1mj4grYYA0Xg/eR5htA==,iv:fNOBbZW+CeBXEH2H7Zs9nC1Jpi0BT10tglhELhA8vK8=,tag:UhDCr/z/rmLWlbh4RNQdAQ==,type:str]
+      rule: ENC[AES256_GCM,data:ZATXRH9vO+CJsj3JdUk2+3TqhvItK6wV8ILhYMG0JnLfB/lE6FPpvnFfF1JCrbww6YoZlb94EicB7g==,iv:jt1P2KX5IEM+Y9HG9yQxWIDa3lFKQJMfgr3v2Kxmn1E=,tag:q6tGET9e9ZlwFlgM0BMTLA==,type:str]
       entryPoints:
         - websecure
       middlewares:
@@ -29,7 +29,7 @@ http:
       service: truenas@file
     # Proxmox
     proxmox:
-      rule: ENC[AES256_GCM,data:p/NeK/IXpF0+V5XmAZ1NBJSwcg8SZbADd0bTfqN+N/E=,iv:EpB/zudveRbw/yV5Vt6fkEkp/iqh/yTECdM4W/uaCDc=,tag:GNL+9ba1NsaBieKnulRvXg==,type:str]
+      rule: ENC[AES256_GCM,data:x4xIwR+KizYrHqa1wE9C6YDsodhoDkZwna9HwrpAZEUX+RQpsUkzjWVIG/RZDUkQhCXz47HzkxK39g==,iv:eJBehA0CYgqWHiWNjIsMrH26kDzSHeVrmCY3znBTdZY=,tag:X8vaZOA6T2Pq0VWmm5NNuA==,type:str]
       entryPoints:
         - websecure
       middlewares:
@@ -41,14 +41,14 @@ http:
     truenas:
       loadBalancer:
         servers:
-          - url: ENC[AES256_GCM,data:UWLJR6k3OLQD/VTDkoI4lOXZpIf6,iv:4yMd76uajuPoWeDrgBXcJXywDt7nSeA7pzeg+CqvCq0=,tag:CI4f6m2p6c1mo+kreeE2TQ==,type:str]
+          - url: ENC[AES256_GCM,data:J8gXh9eG2o281CqBTn0YPstsaE6F,iv:FJIHaizxDursKltrgWh1QDI84eb87Z3qxSd+9I4nRt8=,tag:RXHakmPophy5ZbXRcN3pSw==,type:str]
         passHostHeader: true
     # Proxmox
     proxmox:
       loadBalancer:
         serversTransport: insecure
         servers:
-          - url: ENC[AES256_GCM,data:xQ4vaocY0zgLewSllSzW51IKjszLMQ==,iv:Ulu3gDm7JpSefrmVWxmNWRG6AaVFRIQPovupAGrc/iQ=,tag:m7s3QzbKSShvDdoi2saZ0A==,type:str]
+          - url: ENC[AES256_GCM,data:VdjoarBywCJ+k/zxyHicL8wfKXhGdA==,iv:olXr2taiZU9rw8fDnOYUm78NTrBvj/feiCSnK7XMvKY=,tag:A2uSwpnp+AW24BmgdoN6MQ==,type:str]
   # SERVERS TRANSPORTS
   serversTransports:
     # Allow self signed certificates
@@ -59,24 +59,24 @@ sops:
     - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSBpb0hv
-        anFRU1AzNE9peTVPbW1wU3R1MW92bkw2UW0vdi94bmVjU2tXYkhVCjRJMFVMd21v
-        Z0lKWWttV3FMN1FhWEFCaGtPRXpkN1hieGRKcmg4YUNMeUEKLS0tIGVrV21WVHpI
-        b2N1MnhLNFRtQkZia2V2YkVqb2lQQVlBZTlvVXBBWU1KT0UKGwYWRsuEcbALeKTU
-        sKgQ/SjeDO42elyYxfFOim0Jn8pcgR6/Mk/ohWxQ4VDm/wxcbQherd/Cg7DtChul
-        m/sRww==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSBuN1ky
+        Y09YZHJVdlB1a3pmc0MzTEZBamtqMlRpV1lvb28wSldORDB0cmdRCkgzTVcybk42
+        amNUZVJKbkFQb2c0TlQxWHhsZTFrQ09nKytQOUZObUdnRlkKLS0tIEhaYjUzVGpk
+        UzRHVzRqMzBITmdxb0lVVzhzTVBMTzJObDJTOE5PcVhCM0UKOrTRgVATlY6tV/C+
+        YRyjSRBewH+PaYeMTiLY/LaAr4MlS9mlReTG1NwJ5CvNLG0KHd9HOLLMhxkZNzq5
+        /Ny4EA==
         -----END AGE ENCRYPTED FILE-----
     - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyB4Si9S
-        cGZheFZYMzRkT1NnSCtGdmlScWgxZ2pCcXBjRTJPWjh0dU0vMjFJCkNSNzQyaXRp
-        U0x0b1FFZENMems2b25VeEN4eHAvbm5Fek16eGgvK3FEclkKLS0tIDl4UHRHQTFE
-        Nm01VXU5emhPNzV3RWFKc0tyVHhmaE02UjZFMmM0b0hzVm8KwHDeSiHgp7ng2F7Z
-        qNTP+Cpwjv9HmTrFQTYu3OLsGygKKBGPLVe71lYFq/lXTvpR83UUhw8MFghEKdFW
-        mcqYxA==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyBYYUsy
+        ejExZi9KRjJja2ZPUmgvQUFFSWtQanlyT2l2T3J1RzBObUpPeUNjCmtFSFFHQVBa
+        UEFKMUpBVnBTR0NjSzNSR0VKUzdGY2lyaGtWamc3ZXdJdTgKLS0tIFhqRmNCcmgr
+        cllhUzZKNk1OeU43WlNJOVdRNHBnYkhzZGwxdjB0Qi9oR2sKOW0A1pjNnufCM01H
+        rwn5ocsYOc1QHgQAaLtzwyOzzCR5s2goEUyGW9/FYtfsBIFv8D5Ms/UJDiZI+Lwv
+        FYWfnQ==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2026-04-01T09:39:06Z"
-  mac: ENC[AES256_GCM,data:eLCV5lDMJG4ObpfVDhdgWe6Ixt3QH7vkGHea9Dg4fOFf8kOrGU9VJmhe0odbHgCFg6JTamwlldmXmqrHiTsvDAH7GsGX1G2t4CJoSvErv47XRxQK/qWJSNvYXgDjwExHcJioksoAPCntHG3HNUb6DUyGQxflRwc7x1v/VK4lMPo=,iv:bmB7Z33uZQW+rsXRR9xiHEZMYUFT2KoD/LJkII+DZmw=,tag:eyCxBxJ55fPc/USm7I9rNA==,type:str]
+  lastmodified: "2026-04-04T12:43:03Z"
+  mac: ENC[AES256_GCM,data:zgkIPl7QXPn7ZuMcOMwb/HTOnuV4xuJtYXCRzWjJK8q8czCjZnYntcRKTv7lsTvLSObVrQ1o4B27COFkT+CsJvSYkv1pLp7TSx8kdwSz1YhDu3/k5XS6bQfo7D1jiwp3hy3abiCA1jhtXH4nTI45bbHGByWgKbI2lOp0WKeJdTA=,iv:nm+8xY8w1ivT7UVnruemjRZqx5U4JEV1bcD6eW31Du8=,tag:IzTuyM/x+bXJliY/fQH1Yg==,type:str]
   encrypted_regex: (?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority|exposed|sourceRangeHosts|expression|rule
   version: 3.12.2
