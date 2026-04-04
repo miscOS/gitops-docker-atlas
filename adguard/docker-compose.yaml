@@ -28,6 +28,8 @@ services:
       - data:/opt/adguardhome/work
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.adguard.rule: Host(`adguard.${DOMAIN:?error}`)
       traefik.http.routers.adguard.priority: 90

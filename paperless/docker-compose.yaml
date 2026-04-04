@@ -85,6 +85,8 @@ services:
       - postgres
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       crowdsec.enable: true
       crowdsec.labels.type: paperless-ngx
       traefik.enable: true
@@ -112,6 +114,9 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    labels:
+      backup.enable: true
+      backup.mode: stop
 
   redis:
     image: redis:8.6.2
@@ -128,3 +133,6 @@ services:
       interval: 10s
       timeout: 30s
       retries: 3
+    labels:
+      backup.enable: true
+      backup.mode: stop

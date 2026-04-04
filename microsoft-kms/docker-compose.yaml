@@ -14,5 +14,3 @@ services:
         ipv4_address: 10.0.100.150
         mac_address: 10:01:00:01:05:00
     restart: unless-stopped
-    labels:
-      backrest.keep-alive: true

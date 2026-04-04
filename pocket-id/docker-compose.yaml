@@ -36,6 +36,8 @@ services:
       start_period: 10s
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.pocketid.rule: Host(`${DOMAIN:?error}`)
       traefik.http.routers.pocketid.priority: 75

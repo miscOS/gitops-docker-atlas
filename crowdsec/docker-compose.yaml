@@ -24,4 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ../traefik/logs:/logs/traefik:ro
     restart: unless-stopped
+    labels:
+      backup.enable: true
+      backup.mode: live
 

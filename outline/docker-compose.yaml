@@ -69,6 +69,8 @@ services:
       - redis
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.outline.rule: Host(`${OUTLINE_DOMAIN}`)
       traefik.http.routers.outline.entrypoints: websecure
@@ -95,6 +97,9 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    labels:
+      backup.enable: true
+      backup.mode: stop
 
   redis:
     image: redis:8.6.2
@@ -113,3 +118,6 @@ services:
       interval: 10s
       timeout: 30s
       retries: 3
+    labels:
+      backup.enable: true
+      backup.mode: stop

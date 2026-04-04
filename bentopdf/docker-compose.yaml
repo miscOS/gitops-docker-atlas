@@ -15,7 +15,6 @@ services:
     #   - "3000"
     restart: unless-stopped
     labels:
-      backrest.keep-alive: true
       traefik.enable: true
       traefik.http.routers.bentopdf.rule: Host(`${BENTOPDF_DOMAIN:?error}`)
       traefik.http.routers.bentopdf.priority: 35

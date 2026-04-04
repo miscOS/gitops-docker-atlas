@@ -35,7 +35,8 @@ services:
       - "music:/music:ro"
     restart: unless-stopped
     labels:
-      backrest.keep-alive: true
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.navidrome.rule: Host(`${NAVIDROME_DOMAIN:?error}`)
       traefik.http.routers.navidrome.priority: 50
