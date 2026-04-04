@@ -21,3 +21,6 @@ services:
     volumes:
       - data:/var/lib/netbird
     restart: unless-stopped
+    labels:
+      backup.enable: true
+      backup.mode: live

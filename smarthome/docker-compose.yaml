@@ -31,7 +31,8 @@ services:
       NANOMQ_MSQ_LEN: 65535
     restart: unless-stopped
     labels:
-      backrest.keep-alive: true
+      backup.enable: true
+      backup.mode: live
     
   nodeRED:
     image: nodered/node-red:4.1.8-22
@@ -52,6 +53,8 @@ services:
       - nodered_data:/data
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.nodeRED.rule: Host(`nodered.${DOMAIN:?error}`)
       traefik.http.routers.nodeRED.priority: 55
@@ -75,6 +78,8 @@ services:
       - zigbee_data:/app/data
     restart: unless-stopped
     labels:
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.zigbee.rule: Host(`zigbee.${DOMAIN:?error}`)
       traefik.http.routers.zigbee.priority: 55

@@ -78,7 +78,8 @@ services:
       errorpages: {condition: service_healthy}
     restart: unless-stopped
     labels:
-      backrest.keep-alive: true
+      backup.enable: true
+      backup.mode: live
       traefik.enable: true
       traefik.http.routers.traefik.rule: Host(`traefik.${DOMAIN}`)
       traefik.http.routers.traefik.priority: 80
@@ -100,8 +101,6 @@ services:
     volumes:
       - ./logs:/logs:rw
     restart: unless-stopped
-    labels:
-      backrest.keep-alive: true
 
   errorpages:
     image: ghcr.io/tarampampam/error-pages:3.8.1
@@ -115,7 +114,6 @@ services:
       LOG_LEVEL: info
     restart: unless-stopped
     labels:
-      backrest.keep-alive: true
       traefik.enable: true
       traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${DOMAIN}`) || Host(`${DOMAIN}`)
       traefik.http.routers.errorpages.priority: 1
