@@ -1,0 +1,23 @@
+name: bentopdf
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+
+services:
+  bentopdf:
+    image: ghcr.io/alam00000/bentopdf-simple:2.7.0
+    container_name: bentopdf
+    networks:
+      traefik:
+    # expose:
+    #   - "3000"
+    restart: unless-stopped
+    labels:
+      backrest.keep-alive: true
+      traefik.enable: true
+      traefik.http.routers.bentopdf.rule: Host(`${BENTOPDF_DOMAIN:?error}`)
+      traefik.http.routers.bentopdf.priority: 35
+      traefik.http.routers.bentopdf.entrypoints: websecure
+      traefik.http.services.bentopdf.loadbalancer.server.port: 8080
