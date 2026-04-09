@@ -7,7 +7,7 @@ networks:
 
 services:
   docker-deploy:
-    image: ghcr.io/miscos/docker-deploy-tool:1.0.0
+    image: ghcr.io/miscos/docker-deploy-tool:1.0.1
     container_name: DockerDeploy
     networks:
       netbird:
