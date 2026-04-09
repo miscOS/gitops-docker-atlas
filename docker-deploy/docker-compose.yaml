@@ -1,0 +1,24 @@
+name: docker-deploy
+
+networks:
+  netbird:
+    name: netbird
+    external: true
+
+services:
+  docker-deploy:
+    image: ghcr.io/miscos/docker-deploy-tool:1.0.0
+    container_name: DockerDeploy
+    networks:
+      netbird:
+        ipv4_address: 172.30.0.80
+    environment:
+      PORT: "8080"
+      GIT_BASE_DIRECTORY: "/home/ubuntu/gitops-docker-atlas/"
+      GIT_WEBHOOK_SECRET: ${GIT_WEBHOOK_SECRET:?error}
+      IGNORED_SUBDIRECTORIES: docker-deploy
+    volumes:
+      - /home/ubuntu/.ssh/:/user/.ssh/:ro
+      - /home/ubuntu/gitops-docker-atlas:/home/ubuntu/gitops-docker-atlas:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
