@@ -13,7 +13,7 @@ networks:
 
 services:
   pocket-id:
-    image: ghcr.io/pocket-id/pocket-id:v2.5.0-distroless
+    image: ghcr.io/pocket-id/pocket-id:v2.6.0-distroless
     container_name: pocket-id
     hostname: pocket-id
     networks:
