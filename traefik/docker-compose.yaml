@@ -13,7 +13,7 @@ volumes:
 
 services:
   traefik:
-    image: traefik:v3.6.13
+    image: traefik:v3.6.14
     container_name: traefik
     hostname: traefik
     networks:
