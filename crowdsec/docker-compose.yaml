@@ -12,7 +12,7 @@ services:
     environment:
       CUSTOM_HOSTNAME: vm-docker-atlas
       TZ: Europe/Berlin
-      COLLECTIONS: andreasbrett/paperless-ngx
+      COLLECTIONS: andreasbrett/paperless-ngx Dominic-Wagner/vaultwarden
       DISABLE_LOCAL_API: true
       LOCAL_API_URL: ${LAPI_URL}
       AGENT_USERNAME: ${AGENT_USERNAME}
