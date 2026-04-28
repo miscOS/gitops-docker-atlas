@@ -5,15 +5,6 @@ networks:
     name: traefik
     external: true
 
-volumes:
-  cache:
-  data:
-  repository:
-    driver_opts:
-      type: "nfs"
-      o: "addr=10.0.10.101,nolock,soft,rw"
-      device: ":/mnt/SSD/Docker/Backup/"
-
 services:
   backrest:
     image: garethgeorge/backrest:v1.12.1
@@ -42,7 +33,16 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
-      traefik.http.routers.backrest.rule: Host(`backup.${DOMAIN}`)
+      traefik.http.routers.backrest.rule: Host(`${BACKREST_DOMAIN}`)
       traefik.http.routers.backrest.priority: 65
       traefik.http.routers.backrest.entrypoints: websecure
       traefik.http.services.backrest.loadbalancer.server.port: 9898
+
+volumes:
+  cache:
+  data:
+  repository:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.201,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Backup/"

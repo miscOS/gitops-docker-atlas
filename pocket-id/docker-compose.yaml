@@ -1,8 +1,5 @@
 name: pocket-id
 
-volumes:
-  data:
-
 networks:
   netbird:
     name: netbird
@@ -18,10 +15,10 @@ services:
     hostname: pocket-id
     networks:
       netbird:
-        ipv4_address: 172.30.0.10
+        ipv4_address: ${POCKETID_NETBIRD_IP:?error}
       traefik:
     environment:
-      APP_URL: https://${DOMAIN:?error}
+      APP_URL: https://${POCKETID_DOMAIN:?error}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       TRUST_PROXY: true
     volumes:
@@ -39,8 +36,11 @@ services:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.pocketid.rule: Host(`${DOMAIN:?error}`)
+      traefik.http.routers.pocketid.rule: Host(`${POCKETID_DOMAIN:?error}`)
       traefik.http.routers.pocketid.priority: 75
       traefik.http.routers.pocketid.entrypoints: websecure
       traefik.http.routers.pocketid.middlewares: local-ip-allow-list@file
       traefik.http.services.pocketid.loadbalancer.server.port: 1411
+
+volumes:
+  data:

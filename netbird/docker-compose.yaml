@@ -5,12 +5,9 @@ networks:
     name: netbird
     external: true
 
-volumes:
-  data:
-
 services:
   netbird-peer:
-    image: netbirdio/netbird:0.69.0-rootless
+    image: netbirdio/netbird:0.70.0-rootless
     container_name: netbird-peer
     hostname: ${NB_HOSTNAME:?error}
     networks:
@@ -24,3 +21,6 @@ services:
     labels:
       backup.enable: true
       backup.mode: live
+
+volumes:
+  data:

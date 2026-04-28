@@ -1,27 +1,23 @@
 name: smarthome
 
 networks:
-  backend:
-    name: smarthome_backend
+  internal:
+    name: smarthome_internal
     driver: bridge
-  lan:
+  macvlan:
     name: macvlan
     external: true
   traefik:
     name: traefik
     external: true
 
-volumes:
-  nodered_data:
-  zigbee_data:
-
 services:
   nanomq:
     image: emqx/nanomq:0.24.13
-    container_name: NanoMQ
-    hostname: NanoMQ
+    container_name: nanoMQ
+    hostname: nanoMQ
     networks:
-      backend:
+      internal:
         aliases:
           - mqtt
     environment:
@@ -39,13 +35,10 @@ services:
     container_name: nodeRED
     hostname: nodeRED
     networks:
-      backend:
-        aliases:
-          - nodeRED
-      lan:
-        ipv4_address: 10.0.100.5
-        ipv6_address: fddd:d0::01:00:05
-        mac_address: 10:02:01:00:00:05
+      internal:
+      macvlan:
+        ipv4_address: ${NODERED_IP:?error}
+        mac_address: ${NODERED_MAC:?error}        
       traefik:
     environment:
       TZ: Europe/Berlin
@@ -56,17 +49,17 @@ services:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.nodeRED.rule: Host(`nodered.${DOMAIN:?error}`)
-      traefik.http.routers.nodeRED.priority: 55
+      traefik.http.routers.nodeRED.rule: Host(`${NODERED_DOMAIN:?error}`)
+      traefik.http.routers.nodeRED.priority: 65
       traefik.http.routers.nodeRED.entrypoints: websecure
       traefik.http.routers.nodeRED.middlewares: local-ip-allow-list@file
       traefik.http.services.nodeRED.loadbalancer.server.port: 1880
 
   zigbee:
     image: koenkk/zigbee2mqtt:2.9.2
-    container_name: Zigbee
+    container_name: zigbee
     networks:
-      backend:
+      internal:
         aliases:
           - zigbee
       traefik:
@@ -81,8 +74,12 @@ services:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.zigbee.rule: Host(`zigbee.${DOMAIN:?error}`)
-      traefik.http.routers.zigbee.priority: 55
+      traefik.http.routers.zigbee.rule: Host(`${ZIGBEE_DOMAIN:?error}`)
+      traefik.http.routers.zigbee.priority: 65
       traefik.http.routers.zigbee.entrypoints: websecure
       traefik.http.routers.zigbee.middlewares: local-ip-allow-list@file
       traefik.http.services.zigbee.loadbalancer.server.port: 80
+
+volumes:
+  nodered_data:
+  zigbee_data:

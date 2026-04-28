@@ -1,8 +1,8 @@
 name: paperless
 
 networks:
-  backend:
-    name: paperless_backend
+  internal:
+    name: paperless_internal
     driver: bridge
   netbird:
     name: netbird
@@ -11,26 +11,14 @@ networks:
     name: traefik
     external: true
 
-volumes:
-  data:
-  redis_data:
-  postgres_data:
-  media:
-    driver_opts:
-      type: "nfs"
-      o: "addr=10.0.10.101,nolock,soft,rw"
-      device: ":/mnt/SSD/Docker/Paperless"
-
 services:
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:2.20.14
     container_name: paperless
     networks:
-      backend:
-        aliases:
-          - paperless
+      internal:
       netbird:
-        ipv4_address: 172.30.0.20
+        ipv4_address: ${PAPERLESS_NETBIRD_IP:?error}
       traefik:
     environment:
       USERMAP_UID: 1000
@@ -43,12 +31,11 @@ services:
       PAPERLESS_DBHOST: db
       PAPERLESS_DBNAME: ${POSTGRES_DB:-paperless}
       PAPERLESS_DBUSER: ${POSTGRES_USER:-paperless}
-      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD:-paperless}
+      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD:-password}
       PAPERLESS_CONSUMER_POLLING: 15
-      # PAPERLESS_URL: https://${PAPERLESS_DOMAIN}
-      PAPERLESS_ALLOWED_HOSTS: "${PAPERLESS_DOMAIN},${PAPERLESS_LOCAL_DOMAIN}"
-      PAPERLESS_CORS_ALLOWED_HOSTS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_LOCAL_DOMAIN}"
-      PAPERLESS_CSRF_TRUSTED_ORIGINS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_LOCAL_DOMAIN}"
+      PAPERLESS_ALLOWED_HOSTS: "${PAPERLESS_DOMAIN},${PAPERLESS_PUBLIC_DOMAIN}"
+      PAPERLESS_CORS_ALLOWED_HOSTS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_PUBLIC_DOMAIN}"
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: "https://${PAPERLESS_DOMAIN},https://${PAPERLESS_PUBLIC_DOMAIN}"
       # OIDC SSO configuration:
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
       PAPERLESS_SOCIAL_ACCOUNT_DEFAULT_GROUPS: pocket-id
@@ -81,8 +68,10 @@ services:
       - /mnt/paperless/Import:/usr/src/paperless/consume
       - /mnt/paperless/Export:/usr/src/paperless/export
     depends_on:
-      - redis
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     labels:
       backup.enable: true
@@ -90,7 +79,7 @@ services:
       crowdsec.enable: true
       crowdsec.labels.type: paperless-ngx
       traefik.enable: true
-      traefik.http.routers.paperless.rule: Host(`${PAPERLESS_LOCAL_DOMAIN}`)
+      traefik.http.routers.paperless.rule: Host(`${PAPERLESS_DOMAIN}`)
       traefik.http.routers.paperless.priority: 60
       traefik.http.routers.paperless.entrypoints: websecure
       traefik.http.services.paperless.loadbalancer.server.port: 8000
@@ -99,18 +88,19 @@ services:
     image: postgres:18.3-trixie
     container_name: paperless_db
     networks:
-      backend:
+      internal:
         aliases:
           - db
     environment:
+      TZ: "Europe/Berlin"
       POSTGRES_DB: ${POSTGRES_DB:-paperless}
       POSTGRES_USER: ${POSTGRES_USER:-paperless}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paperless}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     volumes:
       - postgres_data:/var/lib/postgresql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "outline", "-U", "user"]
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-paperless}", "-U", "${POSTGRES_USER:-paperless}"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -122,7 +112,7 @@ services:
     image: redis:8.6.2
     container_name: paperless_redis
     networks:
-      backend:
+      internal:
         aliases:
           - broker
     volumes:
@@ -136,3 +126,13 @@ services:
     labels:
       backup.enable: true
       backup.mode: stop
+
+volumes:
+  data:
+  redis_data:
+  postgres_data:
+  media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.201,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Paperless"
