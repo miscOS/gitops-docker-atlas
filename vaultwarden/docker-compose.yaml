@@ -1,0 +1,83 @@
+name: vaultwarden
+
+networks:
+  internal:
+    name: vaultwarden_internal
+    driver: bridge
+  netbird:
+    name: netbird
+    external: true
+  traefik:
+    name: traefik
+    external: true
+
+services:
+  vaultwarden:
+    image: ghcr.io/dani-garcia/vaultwarden:1.35.8-alpine
+    container_name: vaultwarden
+    networks:
+      internal:
+      netbird:
+        ipv4_address: 172.30.0.12
+      traefik:
+    environment:
+      TZ: Europe/Berlin
+      DOMAIN: https://vaultwarden.${DOMAIN}
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-vaultwarden}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vaultwarden}"
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?error}
+      SMTP_HOST: ${SMTP_HOST_URL:?error}
+      SMTP_PORT: 465
+      SMTP_FROM: ${SMTP_EMAIL:?error}
+      SMTP_USERNAME: ${SMTP_EMAIL:?error}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:?error}
+      SMTP_SECURITY: force_tls
+      SSO_ENABLED: true
+      SSO_AUTHORITY: ${SSO_AUTHORITY:?error}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID:?error}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:?error}
+      SIGNUPS_ALLOWED: false
+      INVITATIONS_ALLOWED: false
+    volumes:
+      - data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    labels:
+      backup.enable: true
+      backup.mode: live
+      crowdsec.enable: true
+      crowdsec.labels.type: Vaultwarden
+      traefik.enable: true
+      traefik.http.routers.vaultwarden.rule: Host(`vaultwarden.${DOMAIN}`)
+      traefik.http.routers.vaultwarden.priority: 70
+      traefik.http.routers.vaultwarden.entrypoints: websecure
+      traefik.http.services.vaultwarden.loadbalancer.server.port: 80
+
+  postgres:
+    image: postgres:18.3-trixie
+    container_name: vaultwarden_db
+    networks:
+      internal:
+        aliases:
+          - db
+    environment:
+      TZ: "Europe/Berlin"
+      POSTGRES_DB: ${POSTGRES_DB:-vaultwarden}
+      POSTGRES_USER: ${POSTGRES_USER:-vaultwarden}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-vaultwarden}", "-U", "${POSTGRES_USER:-vaultwarden}"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    labels:
+      backup.enable: true
+      backup.mode: stop
+
+volumes:
+  data:
+  postgres_data:
