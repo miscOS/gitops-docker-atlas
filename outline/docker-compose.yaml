@@ -1,8 +1,8 @@
 name: outline
 
 networks:
-  backend:
-    name: outline_backend
+  internal:
+    name: outline_internal
     driver: bridge
   netbird:
     name: netbird
@@ -11,28 +11,15 @@ networks:
     name: traefik
     external: true
 
-volumes:
-  redis_data:
-  postgres_data:
-  data:
-    driver_opts:
-      type: "nfs"
-      o: "addr=10.0.10.101,nolock,soft,rw"
-      device: ":/mnt/SSD/Docker/Outline"
-
 services:
   outline:
     image: outlinewiki/outline:1.6.1
     container_name: outline
     networks:
-      backend:
-        aliases:
-          - outline
+      internal:
       netbird:
-        ipv4_address: 172.30.0.22
+        ipv4_address: ${OUTLINE_NETBIRD_IP:?error}
       traefik:
-    expose:
-      - "3000"
     environment:
       # Logging and updates
       ENABLE_UPDATES: true # Sends anonymous usage statistics and update notifications to the Outline team. Set to false to disable.
@@ -40,10 +27,10 @@ services:
       LOG_LEVEL: info
       # Application configuration
       URL: https://${OUTLINE_DOMAIN:?error}
-      SECRET_KEY: ${SECRET_KEY}
-      UTILS_SECRET: ${UTILS_SECRET}
+      SECRET_KEY: ${SECRET_KEY:?error}
+      UTILS_SECRET: ${UTILS_SECRET:?error}
       DEFAULT_LANGUAGE: de_DE
-      DATABASE_URL: postgres://${POSTGRES_USER:-outline}:${POSTGRES_PASSWORD:-outline}@db:5432/${POSTGRES_DB:-outline}?
+      DATABASE_URL: postgres://${POSTGRES_USER:-outline}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-outline}?
       PGSSLMODE: disable
       REDIS_URL: redis://broker:6379
       # File storage configuration
@@ -65,14 +52,16 @@ services:
     volumes:
       - data:/var/lib/outline/data
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     labels:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.outline.rule: Host(`${OUTLINE_DOMAIN}`)
+      traefik.http.routers.outline.rule: Host(`${OUTLINE_DOMAIN:?error}`)
       traefik.http.routers.outline.entrypoints: websecure
       traefik.http.services.outline.loadbalancer.server.port: 3000
 
@@ -80,20 +69,19 @@ services:
     image: postgres:18.3-trixie
     container_name: outline_db
     networks:
-      backend:
+      internal:
         aliases:
           - db
-    expose:
-      - "5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-outline}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-outline}
+      TZ: "Europe/Berlin"
       POSTGRES_DB: ${POSTGRES_DB:-outline}
+      POSTGRES_USER: ${POSTGRES_USER:-outline}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     volumes:
       - postgres_data:/var/lib/postgresql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "outline", "-U", "user"]
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-outline}", "-U", "${POSTGRES_USER:-outline}"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -105,11 +93,9 @@ services:
     image: redis:8.6.2
     container_name: outline_redis
     networks:
-      backend:
+      internal:
         aliases:
           - broker
-    expose:
-      - "6379"
     volumes:
       - redis_data:/data
     restart: unless-stopped
@@ -121,3 +107,12 @@ services:
     labels:
       backup.enable: true
       backup.mode: stop
+
+volumes:
+  redis_data:
+  postgres_data:
+  data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.10.201,nolock,soft,rw"
+      device: ":/mnt/SSD/Docker/Outline"

@@ -8,9 +8,6 @@ networks:
     name: traefik
     external: true
 
-volumes:
-  letsencrypt:
-
 services:
   traefik:
     image: traefik:v3.6.14
@@ -18,9 +15,8 @@ services:
     hostname: traefik
     networks:
       macvlan:
-        ipv4_address: 10.0.100.1
-        ipv6_address: fddd:d0::01:00:01
-        mac_address: 10:01:00:00:00:01
+        ipv4_address: ${TRAEFIK_IP:?error}
+        mac_address: ${TRAEFIK_MAC:?error}
       traefik:
     ports:
       - 80:80
@@ -29,6 +25,8 @@ services:
       TZ: "Europe/Berlin"
       CLOUDFLARE_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?error}
     command:
+      # Healthcheck
+      - "--ping"
       # Logging
       - "--log.level=INFO"
       - "--log.format=json"
@@ -52,10 +50,10 @@ services:
       - "--entrypoints.websecure.http.middlewares[0]=errorpages@file"
       - "--entrypoints.websecure.http.tls=true"
       - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
-      - "--entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}"
-      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}"
-      - "--entrypoints.websecure.http.tls.domains[1].main=${DOMAIN_PUBLIC}"
-      - "--entrypoints.websecure.http.tls.domains[1].sans=*.${DOMAIN_PUBLIC}"
+      - "--entrypoints.websecure.http.tls.domains[0].main=${CERT_DOMAIN}"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${CERT_DOMAIN}"
+      - "--entrypoints.websecure.http.tls.domains[1].main=${CERT_DOMAIN_PUBLIC}"
+      - "--entrypoints.websecure.http.tls.domains[1].sans=*.${CERT_DOMAIN_PUBLIC}"
       # Let's Encrypt ACME
       # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
@@ -74,6 +72,12 @@ services:
       - ./config/dynamic.yaml:/etc/traefik/dynamic.yaml:ro
       - ./logs:/logs:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       errorpages: {condition: service_healthy}
     restart: unless-stopped
@@ -81,7 +85,7 @@ services:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.traefik.rule: Host(`traefik.${DOMAIN}`)
+      traefik.http.routers.traefik.rule: Host(`${TRAEFIK_DOMAIN}`)
       traefik.http.routers.traefik.priority: 80
       traefik.http.routers.traefik.entrypoints: websecure
       traefik.http.routers.traefik.middlewares: local-ip-allow-list@file
@@ -115,7 +119,10 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
-      traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${DOMAIN}`) || Host(`${DOMAIN}`)
+      traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${CERT_DOMAIN}`) || Host(`${CERT_DOMAIN}`)
       traefik.http.routers.errorpages.priority: 1
       traefik.http.routers.errorpages.entrypoints: websecure
       traefik.http.services.errorpages.loadbalancer.server.port: 8080
+
+volumes:
+  letsencrypt:

@@ -8,9 +8,9 @@ networks:
 services:
   vlmcsd:
     image: ghcr.io/miscos/vlmcsd-docker:latest
-    container_name: KMSEmulator
+    container_name: microsoft-kms
     networks:
       lan:
-        ipv4_address: 10.0.100.150
-        mac_address: 10:01:00:01:05:00
+        ipv4_address: ${KMS_IP:?error}
+        mac_address: ${KMS_MAC:?error}
     restart: unless-stopped
