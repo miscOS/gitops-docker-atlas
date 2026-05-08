@@ -7,11 +7,13 @@ networks:
 
 services:
   nautilus-ci:
-    image: ghcr.io/miscos/nautilus-ci:1.0.0
+    image: ghcr.io/miscos/nautilus-ci:1.0.1
     container_name: nautilus-ci
     networks:
       netbird:
         ipv4_address: ${NAUTILUS_NETBIRD_IP:?error}
+    group_add:
+      - ${DOCKER_GROUP_ID:?error} # Add the container to the docker group to allow access to the Docker socket
     environment:
       PORT: ${NAUTILUS_PORT:?error}
       GIT_BASE_DIRECTORY: "/home/ubuntu/gitops-docker-atlas/"
