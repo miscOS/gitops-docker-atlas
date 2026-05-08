@@ -13,11 +13,11 @@ recipients: &recipients
 creation_rules:
   # Environment variable files
   - path_regex: \.env$
-    encrypted_regex: '(?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority'
+    encrypted_regex: '(?i)password|key|token|secret|email|ip|domain|uri|url|api_endpoint|issuer|authority'
     <<: *recipients
   # JSON files
   - path_regex: \.json$
-    encrypted_regex: '(?i)password|key|token|secret|email|domain|ed25519'
+    encrypted_regex: '(?i)password|key|token|secret|email|ip|domain|ed25519'
     <<: *recipients
   # YAML files
   - path_regex: \.yaml$
