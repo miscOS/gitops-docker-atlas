@@ -13,7 +13,7 @@ networks:
 
 services:
   vaultwarden:
-    image: ghcr.io/dani-garcia/vaultwarden:1.35.8-alpine
+    image: ghcr.io/dani-garcia/vaultwarden:1.36.0-alpine
     container_name: vaultwarden
     networks:
       internal:
