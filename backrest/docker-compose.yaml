@@ -7,7 +7,7 @@ networks:
 
 services:
   backrest:
-    image: garethgeorge/backrest:v1.12.1
+    image: garethgeorge/backrest:v1.13.0
     container_name: backrest
     hostname: backrest
     networks:
