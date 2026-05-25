@@ -55,7 +55,7 @@ services:
       traefik.http.services.vaultwarden.loadbalancer.server.port: 80
 
   postgres:
-    image: postgres:18.3-trixie
+    image: postgres:18.4-trixie
     container_name: vaultwarden_db
     networks:
       internal:
