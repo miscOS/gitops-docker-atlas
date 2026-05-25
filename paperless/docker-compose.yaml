@@ -85,7 +85,7 @@ services:
       traefik.http.services.paperless.loadbalancer.server.port: 8000
 
   postgres:
-    image: postgres:18.3-trixie
+    image: postgres:18.4-trixie
     container_name: paperless_db
     networks:
       internal:
