@@ -90,7 +90,7 @@ services:
       backup.mode: stop
 
   redis:
-    image: redis:8.6.3
+    image: redis:8.8.0
     container_name: outline_redis
     networks:
       internal:
