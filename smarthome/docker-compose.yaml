@@ -31,7 +31,7 @@ services:
       backup.mode: live
     
   nodeRED:
-    image: nodered/node-red:4.1.10-22
+    image: nodered/node-red:4.1.11-22
     container_name: nodeRED
     hostname: nodeRED
     networks:
