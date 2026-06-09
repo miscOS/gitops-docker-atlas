@@ -13,7 +13,7 @@ networks:
 
 services:
   nanomq:
-    image: emqx/nanomq:0.24.13
+    image: emqx/nanomq:0.24.14
     container_name: nanoMQ
     hostname: nanoMQ
     networks:
