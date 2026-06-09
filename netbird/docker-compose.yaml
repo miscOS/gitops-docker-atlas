@@ -7,7 +7,7 @@ networks:
 
 services:
   netbird-peer:
-    image: netbirdio/netbird:0.71.4-rootless
+    image: netbirdio/netbird:0.72.2-rootless
     container_name: netbird-peer
     hostname: ${NB_HOSTNAME:?error}
     networks:
