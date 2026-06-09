@@ -13,7 +13,7 @@ networks:
 
 services:
   outline:
-    image: outlinewiki/outline:1.7.1
+    image: outlinewiki/outline:1.8.1
     container_name: outline
     networks:
       internal:
