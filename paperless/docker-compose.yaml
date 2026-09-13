@@ -20,6 +20,8 @@ services:
       netbird:
         ipv4_address: ${PAPERLESS_NETBIRD_IP:?error}
       traefik:
+    extra_hosts:
+      - "${OIDC_ISSUER:?error}:${OIDC_IP:?error}"
     environment:
       USERMAP_UID: 1000
       USERMAP_GID: 1000

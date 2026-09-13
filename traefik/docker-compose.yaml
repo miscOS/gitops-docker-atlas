@@ -18,6 +18,7 @@ services:
         ipv4_address: ${TRAEFIK_IP:?error}
         mac_address: ${TRAEFIK_MAC:?error}
       traefik:
+        ipv4_address: ${TRAEFIK_INTERNAL_IP:?error}
     ports:
       - 80:80
       - 443:443
@@ -54,6 +55,8 @@ services:
       - "--entrypoints.websecure.http.tls.domains[0].sans=*.${CERT_DOMAIN}"
       - "--entrypoints.websecure.http.tls.domains[1].main=${CERT_DOMAIN_PUBLIC}"
       - "--entrypoints.websecure.http.tls.domains[1].sans=*.${CERT_DOMAIN_PUBLIC}"
+      - "--entrypoints.websecure.http.tls.domains[2].main=${DOMAIN_2}"
+      - "--entrypoints.websecure.http.tls.domains[2].sans=*.${DOMAIN_2}"
       # Let's Encrypt ACME
       # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
