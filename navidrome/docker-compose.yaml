@@ -10,7 +10,7 @@ networks:
 
 services:
   navidrome:
-    image: deluan/navidrome:0.62.0
+    image: deluan/navidrome:0.64.2
     container_name: navidrome
     networks:
       netbird:
