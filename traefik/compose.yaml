@@ -52,19 +52,19 @@ services:
       - "--entrypoints.websecure.http.middlewares[0]=errorpages@file"
       - "--entrypoints.websecure.http.tls=true"
       - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
-      - "--entrypoints.websecure.http.tls.domains[0].main=${CERT_DOMAIN}"
-      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${CERT_DOMAIN}"
-      - "--entrypoints.websecure.http.tls.domains[1].main=${CERT_DOMAIN_PUBLIC}"
-      - "--entrypoints.websecure.http.tls.domains[1].sans=*.${CERT_DOMAIN_PUBLIC}"
-      - "--entrypoints.websecure.http.tls.domains[2].main=${DOMAIN_2}"
-      - "--entrypoints.websecure.http.tls.domains[2].sans=*.${DOMAIN_2}"
+      - "--entrypoints.websecure.http.tls.domains[0].main=${CERT_DOMAIN:?error}"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${CERT_DOMAIN:?error}"
+      - "--entrypoints.websecure.http.tls.domains[1].main=${CERT_DOMAIN_2:?error}"
+      - "--entrypoints.websecure.http.tls.domains[1].sans=*.${CERT_DOMAIN_2:?error}"
+      - "--entrypoints.websecure.http.tls.domains[2].main=${CERT_DOMAIN_3:?error}"
+      - "--entrypoints.websecure.http.tls.domains[2].sans=*.${CERT_DOMAIN_3:?error}"
       - "--entrypoints.websecure.http.aliasHeadersStrategy=delete"
       # Let's Encrypt ACME
       # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare"
       - "--certificatesresolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
-      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL:?error}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       # Plugins
       - "--experimental.plugins.ddns-allowlist.moduleName=github.com/taskmedia/ddns-allowlist"
@@ -90,7 +90,7 @@ services:
       backup.enable: true
       backup.mode: live
       traefik.enable: true
-      traefik.http.routers.traefik.rule: Host(`${TRAEFIK_DOMAIN}`)
+      traefik.http.routers.traefik.rule: Host(`${TRAEFIK_DOMAIN:?error}`)
       traefik.http.routers.traefik.priority: 80
       traefik.http.routers.traefik.entrypoints: websecure
       traefik.http.routers.traefik.middlewares: local-ip-allow-list@file
@@ -124,7 +124,7 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
-      traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${CERT_DOMAIN}`) || Host(`${CERT_DOMAIN}`)
+      traefik.http.routers.errorpages.rule: HostRegexp(`^.+.${CERT_DOMAIN:?error}`) || Host(`${CERT_DOMAIN:?error}`) || HostRegexp(`^.+.${CERT_DOMAIN_2:?error}`) || Host(`${CERT_DOMAIN_2:?error}`) || HostRegexp(`^.+.${CERT_DOMAIN_3:?error}`) || Host(`${CERT_DOMAIN_3:?error}`)
       traefik.http.routers.errorpages.priority: 1
       traefik.http.routers.errorpages.entrypoints: websecure
       traefik.http.services.errorpages.loadbalancer.server.port: 8080
