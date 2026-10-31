@@ -111,7 +111,7 @@ services:
       backup.mode: stop
 
   redis:
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: paperless_redis
     networks:
       internal:
