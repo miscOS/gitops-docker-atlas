@@ -47,6 +47,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.aliasHeadersStrategy=delete"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.http.middlewares[0]=errorpages@file"
       - "--entrypoints.websecure.http.tls=true"
@@ -57,6 +58,7 @@ services:
       - "--entrypoints.websecure.http.tls.domains[1].sans=*.${CERT_DOMAIN_PUBLIC}"
       - "--entrypoints.websecure.http.tls.domains[2].main=${DOMAIN_2}"
       - "--entrypoints.websecure.http.tls.domains[2].sans=*.${DOMAIN_2}"
+      - "--entrypoints.websecure.http.aliasHeadersStrategy=delete"
       # Let's Encrypt ACME
       # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
