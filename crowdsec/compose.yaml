@@ -16,11 +16,11 @@ services:
       DISABLE_LOCAL_API: true
       LOCAL_API_URL: ${LAPI_URL}
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log/traefik:/logs/traefik:ro
       - config:/etc/crowdsec
       - data:/var/lib/crowdsec/data
       - ./acquis.d:/etc/crowdsec/acquis.d
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../traefik/logs:/logs/traefik:ro
     restart: unless-stopped
     labels:
       backup.enable: true
