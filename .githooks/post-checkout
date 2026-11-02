@@ -3,10 +3,10 @@
 set -eu
 
 INCLUDE_EXTENSIONS=(
-  "*.encrypted.*"
+  "*.enc.*"
 )
 
-ENCRYPTION_INFIX=".encrypted"
+ENCRYPTION_INFIX=".enc"
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
