@@ -1,0 +1,101 @@
+# Global configuration
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+# Logging
+log:
+  level: DEBUG
+  format: json
+accesslog:
+  filePath: /logs/access.log
+  format: json
+  dualOutput: true
+  addInternals: true
+# Dashboard and API
+api:
+  dashboard: true
+  disabledashboardad: true
+  insecure: false
+# Healthcheck
+ping: {}
+# Providers
+providers:
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    exposedByDefault: ENC[AES256_GCM,data:zO456oE=,iv:S6Vnut3RMRxL2r6Dix+yWDvoCjD7BzHwFxSB572SbV4=,tag:fhnaIi8MehoSlNPQ7JFNdw==,type:bool]
+    network: traefik
+  file:
+    filename: /etc/traefik/routing.yaml
+    watch: true
+# EntryPoints
+entryPoints:
+  web:
+    address: :80
+    http:
+      aliasHeadersStrategy: delete
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: :443
+    http:
+      aliasHeadersStrategy: delete
+      middlewares:
+        - errorpages@file
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: ENC[AES256_GCM,data:rpvSje7HYPPDbyNjndH/ZA==,iv:oXqEYbtvruAoa9NnMj25bf09bE4EqDSl88uDEF1RlCg=,tag:gdbA96tRd5kpxTXfG9kzew==,type:str]
+            sans:
+              - ENC[AES256_GCM,data:Y3jFkwk95GxQWYG8BaSlq7ve,iv:IAfSP39f2XvmdTAaj2Vmrf6GvaMCpGU1UzNgj+n647Q=,tag:syj8ugjcLmpTlHG5lIh1Lw==,type:str]
+          - main: ENC[AES256_GCM,data:lue59GJmBO1ZzjM91A==,iv:Nqj/ac94uAkbvcaGmEP9txHs5wMMhjq5eDm4mjcAIYk=,tag:w1EcdXwgmX+YMpYxg/UP9w==,type:str]
+            sans:
+              - ENC[AES256_GCM,data:9lEElEWxTh7zRRDtfog7,iv:NmzTGoSBgB1jKiWjYSlGgHaht4Jiq2ejKJPD23/13KU=,tag:g0KLKfxJc0PSO2TQY1wE0A==,type:str]
+          - main: ENC[AES256_GCM,data:FuftETy95Q1C3w==,iv:jHWMa5rAeO+O8DLxeJ6AqULTjhkYrjI6qRmDjGt+w8Q=,tag:Wi9L+/B/g9K4EnsCr1OLeQ==,type:str]
+            sans:
+              - ENC[AES256_GCM,data:zCYiVPStE/TEHS+9,iv:VHo3apeaLHfeRHaL3kp4s7XmOa4dHw+jNM+vCome8vc=,tag:4FWhctHPIcFLK3ppO9g9Mg==,type:str]
+# Let's Encrypt ACME
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - 1.1.1.1:53
+          - 8.8.8.8:53
+      email: ENC[AES256_GCM,data:w8ZgHMuolVAbSMYXWZTaFO+hzw==,iv:8z3l7yuPSgY320yfchwJTptHH9y1j12mYll0oEZY1sA=,tag:iLA7V57oWUANALzV/8fFig==,type:str]
+      storage: /letsencrypt/acme.json
+# Plugins
+experimental:
+  plugins:
+    ddns-allowlist:
+      moduleName: github.com/taskmedia/ddns-allowlist
+      version: v1.7.0
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSBmZ2ZI
+        R1RrRjViaU0vQy82ejJVTkNGdW5Ca0dOZTc5ZmlHbnFQVGRVM0hrCnRza253TzJp
+        ZnFRRnFFa2RWdzFDZkVaZVhHRmtNZnd0RkhwWHROOGJEZGsKLS0tIEJia0M2Lzc1
+        eUxORms0dnRKT1krR2FScTFUdFBvbUlNaU1qSDB6M3VydWMKXUu2Q0XlDpuBiYYD
+        x+WdH0inagR3napSQlxCojcLwh8bQ3IGCkTo6Wyp3wAN21xGIT7EZAGLw9iympC6
+        VeKMzQ==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyA1YTFE
+        aUlxcUE0L1ovbFVWcjVTY25URFRlcjlLcURHUlBzQlNmYW5xbmxBClJmNFE3NnN2
+        dXRMRGovL0RNM0hPUml1YjVKaE1sb0sxU2JsejhNKzhIUGcKLS0tIFlyZUllMU9j
+        alBBZmVEcCtoSU92a1RWNzR3d1FXRW5VdHhVN25nZm5HNUUKc6sud2QLdeZAA0Hi
+        SPbFxjVdsMKCjQkAKLTW5PCfrc7uh6mDYBnlKr2J5Hap1e4wmGCVmGxC6vVtNu/n
+        oM2GZw==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker
+  encrypted_regex: (?i)password|key|token|secret|email|domain|uri|url|api_endpoint|issuer|authority|exposed|sourceRangeHosts|expression|rule
+  lastmodified: "2026-11-02T17:46:00Z"
+  mac: ENC[AES256_GCM,data:kelWTuFNS0UEwW46RJ5gVSI4N5v2a5a0LBYkbHX1lcswQ+D7TzxhZ59C8g/AiO9c6aRAujv84s2CcZ08C+szAd+F2eIhYBBRIijfcCpI1G1c4toBg7hGhJ8g1AWiABc1okTWM/InDHOHRPD3s6KKyqxWfzgmdC1+bSQWHvksSNk=,iv:fcVD8tXV3yPoqrwfRkvKEk4VbEjcqeWx7XUyFO+b0Tg=,tag:wOD3+d+blX2Oi8MrAeDbDQ==,type:str]
+  version: 3.13.3

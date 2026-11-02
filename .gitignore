@@ -12,4 +12,4 @@ traefik/**/routing.yaml
 traefik/**/traefik.yaml
 
 # Allow encrypted files
-!*encrypted*
+!*.enc*

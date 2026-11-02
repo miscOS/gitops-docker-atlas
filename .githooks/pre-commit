@@ -13,7 +13,7 @@ EXCLUDE_PATTERNS=(
   # Files that are tracked by git are automatically excluded
 )
 
-ENCRYPTION_INFIX=".encrypted"
+ENCRYPTION_INFIX=".enc"
 TEMPORARY_INFIX=".tmp"
 
 CHANGE_DETECTED=false
