@@ -1,5 +1,5 @@
 {
-  "modno": 23,
+  "modno": 24,
   "version": 6,
   "instance": "DXP2800",
   "repos": [
@@ -7,7 +7,7 @@
       "id": "Local",
       "uri": "/repository/docker",
       "guid": "6065d5c3dc1885e8b38f82ac6b1575dd167161340ecd41c7f40eda326dc0b779",
-      "password": "ENC[AES256_GCM,data:soatTf30g996XXVybhAXfgMlAl1wh648XpoIc7T65TOdr8LYvoR4KCivx6bvQJTO,iv:jUsYBgJG1gVXLrcZQdamQJVgkewh2TNfq+lpGYt74Yk=,tag:f05DMPOpoQcQnJSs1iQQ6Q==,type:str]",
+      "password": "ENC[AES256_GCM,data:ng4ZmihhjVJx0Drdy2aZ45KX/uuoUENwautkSg6KkaRGwyqT/a9Y7cwkm5Onglrv,iv:Cr2QHbvYHyeiA4A+yOL67OJ9CRvIHwIz/U0RUQCNZZU=,tag:/8xgAMjcX5XyWLtNMLxkVQ==,type:str]",
       "prunePolicy": {
         "schedule": {
           "cron": "0 4 1 * *",
@@ -81,25 +81,25 @@
   },
   "sync": {
     "identity": {
-      "keyId": "ENC[AES256_GCM,data:B9viw6p2hJpN0lgU2vnlk/5a1jaRbOj40m122k0Jp5f4/vzilEpozkISHcWgyk4PpAtJ,iv:LraIhBmWVsMQmRVQHoThi/zYCXxAz8NDTMfne2hq+yk=,tag:MR2H1RxP0ELSRSd3qtGsKw==,type:str]",
-      "ed25519priv": "ENC[AES256_GCM,data:oy/WdkayyEixZZc27yf805GGOJr1mbL9RZ0563Q4hH2m/YJokxKzvbYnwQ==,iv:NpQMH8UaY5OEVzaMQAIcFmOPSqZBlo7nJ1/1kNUYec0=,tag:F0umqK8FII/m9xhTZpxAKA==,type:str]",
-      "ed25519pub": "ENC[AES256_GCM,data:jal9BSyZOhB1cu8lvKrjemYPLa0NTA78edKi7x8zZRSQXww8cXJAoH97oQ==,iv:rGnbpvjELZVdu7jJs/xCzEmoQD8tUeqclt7jtIaaTIg=,tag:p84vgj6dd/qGwoFjMVvtoA==,type:str]"
+      "keyId": "ENC[AES256_GCM,data:Qleqyrj6T6XdfjgcirYenentlMdfEv2olZrdQCBBIAOYJl8wCvBBxRBSpBUEYBS33TbF,iv:7BAEN7QqzWi7KWav2/4Ba3+xCmhaEIIRaaSYENmmwjU=,tag:p9YkQyVwzUIcG135Mx61Vw==,type:str]",
+      "ed25519priv": "ENC[AES256_GCM,data:nhftItrHfx0Y5u3gi7OcV+0tleQIk29zbsqmTlRBqpjRFZfU+BttMSES5w==,iv:eA+eOE3ev7wAdQTU7fEoWB4HI01dNw8onh3aKO+uA00=,tag:K/fPmI1cKEqduXDbagCtzw==,type:str]",
+      "ed25519pub": "ENC[AES256_GCM,data:xwMD0l6/j8jrWRb9JsF7AHAEkaIrrZigIvurGhG+MSd/IZ4mSnGZaevDzQ==,iv:0mhyCpwoSCdo3SiNby8aSWSqadltDyUdCV7HQ3EcUqI=,tag:96ODQTgh/jbKqx/9K9Jw/A==,type:str]"
     }
   },
   "sops": {
     "age": [
       {
-        "recipient": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s",
-        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSBGMFNW\nOGZ5S1A5N21ITmQ5cFV3czlnb0Noa2p4VncrVkRqTDZYajViZkFjCk5aNnZvTm9H\nMTk2QlhKL2NOZEJGdFJWNVVXbVVVdmVLSVJOR3YycVBreUkKLS0tIFR3YitWSzla\ndEdRYzZiQm5JVVJQbzQ4WFl0MUdBa2ZzSUtmQVFzUTBvVncKuEgD6DMwZZSVbXUN\ncC1C4zxcQD7Xi2Oku9zDgbIKZJxdgOcPaemK7COe4ObeEdK6tNun9Bewu/cb/Iyu\nbkEyYA==\n-----END AGE ENCRYPTED FILE-----\n"
+        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IHUyRnZlQSA2aFF2\nZkRhdkQyTStNZnU5RUZEM1U3SEhzK0YzK0xSQVpNVmJlUWhPd1RjCkt5SWRsNDEv\nWllMSndiTXhTQzJrblJycitHbmMrUVdJZ2dEaHdpY2x5ajAKLS0tIGFjaUl3WmpW\nRkFhM1RmTjBUZkFuVnMrMnhIOWhOL0ZBbHMyaTZ2VWtNVlEKFO1YXpyP/sF9448v\nO0IKx8XHf/XH/++Vn3dkRCKA8scAvVMMh/70X3NutSrmpJuxXVR9XG8Nv/ZMdspD\nTOO8ag==\n-----END AGE ENCRYPTED FILE-----\n",
+        "recipient": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOyhQmd/dcUEfjHT4dXkgjEQqXY7GdRYU40QMNJ3wPi misc.OS@LENOVO-T14s"
       },
       {
-        "recipient": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker",
-        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyBvUXFP\nT2daN3BTdGR3RUhUTXhLYWlIWEtkUHJDZ2tyaUxwNWpQZTE0T0UwCmJhZ1V2WVZJ\nWWpDbWtMd3B5U3ZkMXQ4amxiMll6SFFaMGZDMmRaNG51VmcKLS0tIDhJdWJiT04z\nZWNWLzNDbGJTTktMQjd4OS9pTG4vV1MrUjRVc1Jwb09xYVkKB29dSFmEymV16bMa\n603iyWLlZCNVltY8hqkDtEoQhDUMisoW5MdPska34bQCtwwMipQTvMwVFTDkP0Km\nhuJdZw==\n-----END AGE ENCRYPTED FILE-----\n"
+        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGtRM0Q0ZyBvcy9D\nU2RWaCttdVJKRHhuYzg5d2I0REQ1VEZJK2pIM0laNk1HOENYSlg0Ci91UlI2Qk8r\naDdwaG15bE1EK0FCVG5ha1BwLzlFNXFBQ0NBMDBuMHc3WUUKLS0tIHFSY241eG1m\nczRxWFZSRjM5aFVhV2xYMlpSUTMwZ3VKN2pVV2p3aEdNeWMKLHh4m18kDpNRlkWa\n7lhv3OPvsys/qY+13aseWi6XXsninJcP/BhD/cmcU02sK76qYZRm76WfjGyvFUoD\nDS2NiA==\n-----END AGE ENCRYPTED FILE-----\n",
+        "recipient": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJdJx9MsCQN5i6lizRUUo5DkFhPm+3K/VjqDUeNL9hH ATLAS@VM.docker"
       }
     ],
-    "lastmodified": "2026-10-25T18:32:00Z",
-    "mac": "ENC[AES256_GCM,data:wOABGp330Pbxx9I7q0qarXWIB2dfkvXKwFf2K3QBAreUTBYeg8l70qFSGmtYbCjDB9PwVFHLEok3anxuucXehQwPrYNeYDOXl0gtkTdES6bgmXWtO3rxhLY2binKI7XXdNmBfdea6x/BcqCSJQjVk2uf1DA3KOojLr4sw4Kmxto=,iv:4G2h0L54L2UucJ/F0QKwnSg76QTfJyd7hyZv6t5UAzs=,tag:mbP3vgeD/TNRxmOUB9bZAQ==,type:str]",
     "encrypted_regex": "(?i)password|key|token|secret|email|ip|domain|ed25519",
-    "version": "3.12.2"
+    "lastmodified": "2026-11-02T17:35:07Z",
+    "mac": "ENC[AES256_GCM,data:c6BmyoNMDAb+dWPIzqaNM5E8e9EWOIkN8/vFi7IM8SfEaF/50ZU23nadDtI/QKQfp+pUUZ/G7iujJzVC63rXL4UTAzAI3WHolU8ir5HkTWwk/kxJvssNUjmctySL93SzCqAsK9GNE2D7yiGdL6n86YEaPgVvDFCC7dOWKlEBUnw=,iv:zDc/ud9mIZ+cZOOt53N2CXfegvp+HSYPcebSqWYKnlQ=,tag:e+JncIXXprj3cB3Ex32M3w==,type:str]",
+    "version": "3.13.3"
   }
 }

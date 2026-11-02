@@ -17,6 +17,7 @@ services:
       netbird:
         ipv4_address: ${POCKETID_NETBIRD_IP:?error}
       traefik:
+        ipv4_address: ${POCKETID_TRAEFIK_IP:?error}
     environment:
       APP_URL: https://${POCKETID_DOMAIN:?error}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}

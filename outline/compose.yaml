@@ -20,8 +20,9 @@ services:
       netbird:
         ipv4_address: ${OUTLINE_NETBIRD_IP:?error}
       traefik:
+        ipv4_address: ${OUTLINE_TRAEFIK_IP:?error}
     extra_hosts:
-      - ${OIDC_SERVER_URL}:172.20.0.100
+      - "${OIDC_ISSUER:?error}:${OIDC_IP:?error}"
     environment:
       # Logging and updates
       ENABLE_UPDATES: true # Sends anonymous usage statistics and update notifications to the Outline team. Set to false to disable.
@@ -47,7 +48,7 @@ services:
       # OIDC SSO configuration
       # DOCS: https://docs.getoutline.com/s/hosting/doc/oidc-8CPBm6uC0I
       OIDC_DISPLAY_NAME: Pocket ID
-      OIDC_ISSUER_URL: https://${OIDC_SERVER_URL:?error}
+      OIDC_ISSUER_URL: ${OIDC_SERVER_URL:?error}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_KEY:?error}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?error}
       OIDC_DISABLE_REDIRECT: true # Disable redirect to OIDC provider on login page (optional, defaults to false)

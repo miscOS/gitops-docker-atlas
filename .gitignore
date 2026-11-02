@@ -8,7 +8,8 @@
 backrest/**/backrest.json*
 
 # traefik
-traefik/**/dynamic.yaml
+traefik/**/routing.yaml
+traefik/**/traefik.yaml
 
 # Allow encrypted files
 !*encrypted*
