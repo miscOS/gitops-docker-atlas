@@ -19,11 +19,11 @@ services:
     networks:
       internal:
       netbird:
-        ipv4_address: 172.30.0.12
+        ipv4_address: ${VAULTWARDEN_NETBIRD_IP:?error}
       traefik:
     environment:
       TZ: Europe/Berlin
-      DOMAIN: https://vaultwarden.${DOMAIN}
+      DOMAIN: https://${VAULTWARDEN_URL:?error}
       DATABASE_URL: "postgresql://${POSTGRES_USER:-vaultwarden}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vaultwarden}"
       ADMIN_TOKEN: ${ADMIN_TOKEN:?error}
       SMTP_HOST: ${SMTP_HOST_URL:?error}
@@ -50,7 +50,7 @@ services:
       crowdsec.enable: true
       crowdsec.labels.type: Vaultwarden
       traefik.enable: true
-      traefik.http.routers.vaultwarden.rule: Host(`vaultwarden.${DOMAIN}`)
+      traefik.http.routers.vaultwarden.rule: Host(`${VAULTWARDEN_URL:?error}`)
       traefik.http.routers.vaultwarden.priority: 70
       traefik.http.routers.vaultwarden.entrypoints: websecure
       traefik.http.services.vaultwarden.loadbalancer.server.port: 80
